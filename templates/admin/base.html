@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin<span>Panel</span></h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('admin_projects') }}" class="{{ 'active' if 'projects' in request.endpoint else '' }}"><i class="fas fa-project-diagram"></i> Projects</a></li>
+                <li><a href="{{ url_for('admin_skills') }}" class="{{ 'active' if 'skills' in request.endpoint else '' }}"><i class="fas fa-code"></i> Skills</a></li>
+                <li><a href="{{ url_for('admin_achievements') }}" class="{{ 'active' if 'achievements' in request.endpoint else '' }}"><i class="fas fa-trophy"></i> Achievements</a></li>
+                <li><a href="{{ url_for('admin_messages') }}" class="{{ 'active' if 'messages' in request.endpoint else '' }}"><i class="fas fa-envelope"></i> Messages</a></li>
+                <li><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                <li class="logout"><a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="sidebarToggle" class="mobile-toggle"><i class="fas fa-bars"></i></button>
+                    <h1>{% block title %}Dashboard{% endblock %}</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin JS -->
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

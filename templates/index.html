@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Madasamy C — AI/ML Engineer & Data Analyst</title>
+  <meta name="description" content="Portfolio of Madasamy C — MCA Student, AI/ML Engineer, Data Analyst, and Software Engineer passionate about transforming data into intelligent solutions."/>
+  <meta name="keywords" content="Madasamy, Portfolio, AI Engineer, ML Engineer, Data Analyst, Python, Flask, MCA"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<!-- ═══════════════════════  LOADER  ═══════════════════════════════════════ -->
+<div id="loader">
+  <div class="loader-content">
+    <div class="loader-logo">M</div>
+    <div class="loader-bar"><div class="loader-progress"></div></div>
+    <p class="loader-text">Initializing AI Portfolio…</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════  CURSOR  ═══════════════════════════════════════ -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ═══════════════════════  NAVBAR  ═══════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" href="#home">
+      <span class="logo-bracket">&lt;</span>Madasamy<span class="logo-bracket">/&gt;</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home"         class="nav-link active">Home</a></li>
+      <li><a href="#about"        class="nav-link">About</a></li>
+      <li><a href="#projects"     class="nav-link">Projects</a></li>
+      <li><a href="#skills"       class="nav-link">Skills</a></li>
+      <li><a href="#achievements" class="nav-link">Achievements</a></li>
+      <li><a href="#contact"      class="nav-link">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════  HOME SECTION  ══════════════════════════════════ -->
+<section class="section hero-section" id="home">
+  <canvas id="neuralCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-greeting">
+      <span class="greeting-text">Hello World, I'm</span>
+    </div>
+    <h1 class="hero-name">Madasamy C</h1>
+    <div class="hero-roles">
+      <span class="role-prefix">I'm a&nbsp;</span>
+      <span class="typing-text" id="typingText"></span>
+      <span class="typing-cursor">|</span>
+    </div>
+    <p class="hero-desc">
+      Transforming complex data into intelligent solutions &amp; building
+      AI-powered applications that make a real-world impact.
+    </p>
+
+    <!-- Coding Profiles Widget -->
+    <div class="coding-profiles">
+      <!-- LeetCode -->
+      <div class="dsa-widget" data-aos="fade-up" data-aos-delay="200">
+        <div class="dsa-header">
+          <i class="fas fa-code"></i>
+          <span>LeetCode Journey</span>
+          <a href="https://leetcode.com/u/C_Madasamy/" target="_blank" class="dsa-link">View Profile →</a>
+        </div>
+        <div class="dsa-stats">
+          <div class="dsa-stat easy">
+            <div class="dsa-count" data-target="56">0</div>
+            <div class="dsa-label">Easy</div>
+          </div>
+          <div class="dsa-divider"></div>
+          <div class="dsa-stat medium">
+            <div class="dsa-count" data-target="18">0</div>
+            <div class="dsa-label">Medium</div>
+          </div>
+          <div class="dsa-divider"></div>
+          <div class="dsa-stat hard">
+            <div class="dsa-count" data-target="2">0</div>
+            <div class="dsa-label">Hard</div>
+          </div>
+          <div class="dsa-divider"></div>
+          <div class="dsa-stat total">
+            <div class="dsa-count" data-target="76">0</div>
+            <div class="dsa-label">Total</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CodeChef -->
+      <div class="dsa-widget" data-aos="fade-up" data-aos-delay="300">
+        <div class="dsa-header">
+          <i class="fas fa-laptop-code"></i>
+          <span>CodeChef Journey</span>
+          <a href="https://www.codechef.com/users/samy_god_13" target="_blank" class="dsa-link">View Profile →</a>
+        </div>
+        <div class="dsa-stats">
+          <div class="dsa-stat total">
+            <div class="dsa-count" data-target="1454">0</div>
+            <div class="dsa-label">Max Rating</div>
+          </div>
+          <div class="dsa-divider"></div>
+          <div class="dsa-stat medium">
+            <div class="dsa-count" data-target="2">0</div>
+            <div class="dsa-label">Stars</div>
+          </div>
+          <div class="dsa-divider"></div>
+          <div class="dsa-stat easy">
+            <div class="dsa-count" data-target="100">0</div>
+            <div class="dsa-label">Problems</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <p class="dsa-note" data-aos="fade-up" data-aos-delay="400">
+      <i class="fas fa-lightbulb"></i>
+      Consistent DSA practice is key to cracking product-based companies like Amazon, Google &amp; Microsoft
+    </p>
+
+    <div class="hero-buttons">
+      <a href="https://www.linkedin.com/in/madasamy-c-34a67126b"
+         target="_blank" rel="noopener"
+         class="btn btn-primary" id="letsConnectBtn">
+        <i class="fab fa-linkedin"></i> Let's Connect
+      </a>
+      <a href="#projects" class="btn btn-outline">
+        <i class="fas fa-rocket"></i> View Projects
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="avatar-wrapper">
+      <div class="avatar-ring ring1"></div>
+      <div class="avatar-ring ring2"></div>
+      <div class="avatar-ring ring3"></div>
+      <div class="avatar-core">
+        <img src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="Madasamy C" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+      </div>
+      <!-- Floating badges -->
+      <div class="float-badge badge1"><i class="fab fa-python"></i> Python</div>
+      <div class="float-badge badge2"><i class="fas fa-brain"></i> AI/ML</div>
+      <div class="float-badge badge3"><i class="fas fa-chart-bar"></i> Data</div>
+      <div class="float-badge badge4"><i class="fas fa-code"></i> DSA</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  ABOUT SECTION  ═════════════════════════════════ -->
+<section class="section about-section" id="about">
+  <div class="section-container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">Get to Know Me</span>
+      <h2 class="section-title">About <span class="highlight">Me</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-left" data-aos="fade-right">
+        <div class="about-card-visual">
+          <div class="about-avatar">
+            <div class="about-avatar-inner">
+              <img src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="Madasamy C" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+            </div>
+            <div class="about-status">
+              <span class="status-dot"></span> Available for Opportunities
+            </div>
+          </div>
+          <div class="about-info-cards">
+            <div class="info-card">
+              <i class="fas fa-graduation-cap"></i>
+              <div>
+                <strong>MCA Student</strong>
+                <span>Master of Computer Applications</span>
+              </div>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-map-marker-alt"></i>
+              <div>
+                <strong>Tamil Nadu, India</strong>
+                <span>Open to Remote &amp; Relocation</span>
+              </div>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-briefcase"></i>
+              <div>
+                <strong>Fresher</strong>
+                <span>Seeking Product-Based Companies</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-right" data-aos="fade-left">
+        <h3 class="about-title">Passionate about <span class="highlight">AI &amp; Data</span></h3>
+        <p class="about-text">
+          I am an <strong>MCA student</strong> passionate about <strong>Artificial Intelligence,
+          Machine Learning, Data Analytics,</strong> and <strong>Software Development.</strong>
+          I enjoy building real-world applications that transform data into meaningful insights
+          and intelligent solutions.
+        </p>
+        <p class="about-text">
+          My journey started with a curiosity about how machines learn — and it evolved into
+          building end-to-end AI/ML pipelines, interactive dashboards, and scalable web
+          applications. I'm actively solving DSA problems on LeetCode to sharpen my
+          problem-solving skills, targeting <strong>product-based companies</strong>.
+        </p>
+
+        <div class="about-highlights">
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-robot"></i></div>
+            <div>
+              <strong>AI / ML</strong>
+              <span>TensorFlow, Scikit-learn, NLP, Computer Vision</span>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-chart-line"></i></div>
+            <div>
+              <strong>Data Analytics</strong>
+              <span>Pandas, Power BI, Tableau, SQL</span>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-laptop-code"></i></div>
+            <div>
+              <strong>Software Development</strong>
+              <span>Python, Flask, MySQL, JavaScript</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="/download-resume" class="btn btn-primary" id="downloadResumeBtn">
+          <i class="fas fa-download"></i> Download Resume
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  PROJECTS SECTION  ══════════════════════════════ -->
+<section class="section projects-section" id="projects">
+  <div class="section-container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">What I've Built</span>
+      <h2 class="section-title">My <span class="highlight">Projects</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="project-filters" data-aos="fade-up">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="AI/ML">AI / ML</button>
+      <button class="filter-btn" data-filter="Data">Data Analytics</button>
+      <button class="filter-btn" data-filter="Web">Web Dev</button>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
+      <div class="projects-loading">
+        <div class="spinner"></div><p>Loading projects…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  SKILLS SECTION  ════════════════════════════════ -->
+<section class="section skills-section" id="skills">
+  <div class="section-container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">What I Know</span>
+      <h2 class="section-title">My <span class="highlight">Skills</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-categories" id="skillsContainer">
+      <div class="projects-loading">
+        <div class="spinner"></div><p>Loading skills…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  ACHIEVEMENTS SECTION  ═══════════════════════════ -->
+<section class="section achievements-section" id="achievements">
+  <div class="section-container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">My Milestones</span>
+      <h2 class="section-title">Achievements &amp; <span class="highlight">Certificates</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="achievements-grid" id="achievementsGrid">
+      <div class="projects-loading">
+        <div class="spinner"></div><p>Loading achievements…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-overlay" id="lightboxOverlay"></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></button>
+    <img src="" alt="Certificate" id="lightboxImg"/>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════  CONTACT SECTION  ═══════════════════════════════ -->
+<section class="section contact-section" id="contact">
+  <div class="section-container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">Reach Out</span>
+      <h2 class="section-title">Get In <span class="highlight">Touch</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info" data-aos="fade-right">
+        <h3>Let's work together</h3>
+        <p>I'm open to full-time opportunities, internships, freelance projects, and collaborations. Feel free to reach out!</p>
+
+        <div class="contact-cards">
+          <a href="mailto:ymas10132017@gmail.com" class="contact-card">
+            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <strong>Email</strong>
+              <span>ymas10132017@gmail.com</span>
+            </div>
+          </a>
+          <a href="https://github.com/MADASAMY-C" target="_blank" class="contact-card">
+            <div class="contact-icon"><i class="fab fa-github"></i></div>
+            <div>
+              <strong>GitHub</strong>
+              <span>MADASAMY-C</span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/in/madasamy-c-34a67126b" target="_blank" class="contact-card">
+            <div class="contact-icon"><i class="fab fa-linkedin"></i></div>
+            <div>
+              <strong>LinkedIn</strong>
+              <span>madasamy-c-34a67126b</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper" data-aos="fade-left">
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactName">Your Name <span class="req">*</span></label>
+              <input type="text" id="contactName" name="name" placeholder="John Doe" required/>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email Address <span class="req">*</span></label>
+              <input type="email" id="contactEmail" name="email" placeholder="john@example.com" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactSubject">Subject</label>
+            <input type="text" id="contactSubject" name="subject" placeholder="Job Opportunity / Collaboration…"/>
+          </div>
+          <div class="form-group">
+            <label for="contactMessage">Message <span class="req">*</span></label>
+            <textarea id="contactMessage" name="message" rows="5" placeholder="Tell me about the opportunity…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="sendMsgBtn">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  FOOTER  ════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <span class="logo-bracket">&lt;</span>Madasamy<span class="logo-bracket">/&gt;</span>
+    </div>
+    <p class="footer-tagline">Building Intelligence, One Line at a Time.</p>
+    <div class="footer-socials">
+      <a href="https://github.com/MADASAMY-C" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/madasamy-c-34a67126b" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="mailto:ymas10132017@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+    </div>
+    <p class="footer-copy">© 2024 Madasamy C. Crafted with <i class="fas fa-heart"></i> &amp; AI.</p>
+  </div>
+</footer>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <i class="toast-icon fas fa-check-circle"></i>
+  <span class="toast-msg" id="toastMsg">Message sent!</span>
+</div>
+
+<!-- ═══════════════════════  SCRIPTS  ═══════════════════════════════════════ -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+</body>
+</html>

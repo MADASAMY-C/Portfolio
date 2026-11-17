@@ -1,0 +1,104 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Manage Achievements{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Achievements List</h3>
+        <button class="btn btn-primary" id="addAchievementBtn"><i class="fas fa-plus"></i> Add Achievement</button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Issuer</th>
+                        <th>Date</th>
+                        <th>Certificate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in achievements %}
+                    <tr>
+                        <td>{{ a.title }}</td>
+                        <td>{{ a.issuer }}</td>
+                        <td>{{ a.date_earned }}</td>
+                        <td>
+                            {% if a.image_path %}
+                                <span class="badge badge-success">Image Uploaded</span>
+                            {% elif a.certificate_url %}
+                                <a href="{{ a.certificate_url }}" target="_blank" class="btn-link">Link</a>
+                            {% else %}
+                                <span class="text-muted">None</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-outline btn-sm edit-achievement-btn" 
+                                    data-id="{{ a.id }}" 
+                                    data-title="{{ a.title }}" 
+                                    data-issuer="{{ a.issuer }}" 
+                                    data-description="{{ a.description }}" 
+                                    data-date="{{ a.date_earned }}" 
+                                    data-url="{{ a.certificate_url }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="{{ url_for('admin_delete_achievement', aid=a.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center">No achievements found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="achievementModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Add Achievement</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="achievementForm" method="POST" enctype="multipart/form-data" action="{{ url_for('admin_add_achievement') }}">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" id="formTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Issuer (e.g. Coursera, HackerRank)</label>
+                    <input type="text" name="issuer" id="formIssuer" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Date Earned</label>
+                    <input type="date" name="date_earned" id="formDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="formDescription" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Certificate Image</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Certificate URL</label>
+                    <input type="url" name="certificate_url" id="formUrl" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary w-100">Save Achievement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

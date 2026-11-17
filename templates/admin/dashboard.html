@@ -1,0 +1,103 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Stats Cards -->
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+        <div class="stat-info">
+            <h3>{{ project_count }}</h3>
+            <p>Total Projects</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-code"></i></div>
+        <div class="stat-info">
+            <h3>{{ skill_count }}</h3>
+            <p>Skills Listed</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+        <div class="stat-info">
+            <h3>{{ achievement_count }}</h3>
+            <p>Achievements</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+        <div class="stat-info">
+            <h3>{{ unread_count }}</h3>
+            <p>Unread Messages</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-sections">
+    <!-- Resume Upload -->
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-file-pdf"></i> Resume Management</h3>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">Upload your latest PDF resume here. It will overwrite the existing one.</p>
+            <form action="{{ url_for('admin_upload_resume') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                <div class="file-input-wrapper">
+                    <input type="file" name="resume" accept="application/pdf" required>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload Resume</button>
+            </form>
+            <div class="mt-3">
+                <a href="{{ url_for('download_resume') }}" class="btn btn-outline btn-sm" target="_blank"><i class="fas fa-download"></i> Download Current Resume</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-inbox"></i> Recent Messages</h3>
+            <a href="{{ url_for('admin_messages') }}" class="btn-link">View All</a>
+        </div>
+        <div class="card-body p-0">
+            {% if recent_messages %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in recent_messages %}
+                        <tr>
+                            <td>{{ msg.name }}</td>
+                            <td>{{ msg.email }}</td>
+                            <td>{{ msg.sent_at }}</td>
+                            <td>
+                                {% if msg.is_read %}
+                                    <span class="badge badge-success">Read</span>
+                                {% else %}
+                                    <span class="badge badge-warning">New</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-3 text-center text-muted">No messages yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
