@@ -428,7 +428,29 @@ ul {
 }
 
 @media (min-width: 1024px) {
-  .hero-visual { display: block; }
+  .hero-section {
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .hero-content {
+    flex: 1 1 55%;
+    max-width: 680px;
+  }
+
+  .hero-visual {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 380px;
+  }
 }
 
 .avatar-wrapper {
@@ -441,8 +463,8 @@ ul {
 }
 
 .avatar-core {
-  width: 150px;
-  height: 150px;
+  width: 210px;
+  height: 210px;
   background: var(--accent-gradient);
   border-radius: 50%;
   display: flex;
@@ -487,7 +509,7 @@ ul {
 }
 
 .badge1 { top: 10%; left: 0; animation: float 3s ease-in-out infinite; color: #3776ab; }
-.badge2 { top: 20%; right: -10%; animation: float 4s ease-in-out infinite 1s; color: #ff6f00; }
+.badge2 { top: 20%; right: 0; animation: float 4s ease-in-out infinite 1s; color: #ff6f00; }
 .badge3 { bottom: 20%; left: -5%; animation: float 3.5s ease-in-out infinite 0.5s; color: #43a047; }
 .badge4 { bottom: 10%; right: 0; animation: float 4.5s ease-in-out infinite 1.5s; color: #e53935; }
 
@@ -587,8 +609,8 @@ ul {
 }
 
 .about-avatar-inner {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   background: var(--accent-gradient);
   border-radius: 50%;
   display: flex;

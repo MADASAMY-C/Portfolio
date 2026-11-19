@@ -12,18 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("AOS error:", e);
     }
 
-    // ═════════════════════════  LOADER  ═════════════════════════
-    setTimeout(() => {
+    function hideLoader() {
         const loader = document.getElementById('loader');
         if (loader) {
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
-                initTyping(); // Start typing animation after loader
-                animateCounters(); // Start counters
-            }, 500);
+            }, 250);
         }
-    }, 1000);
+    }
+
+    // ═════════════════════════  LOADER  ═════════════════════════
+    setTimeout(() => {
+        hideLoader();
+        initTyping(); // Start typing animation after loader
+        animateCounters(); // Start counters
+    }, 700);
 
     // ═════════════════════════  CUSTOM CURSOR  ═════════════════════════
     const cursorDot = document.getElementById('cursorDot');
@@ -191,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    for (let i = 0; i < 25; i++) particles.push(new Particle());
 
     function drawLines() {
         for (let i = 0; i < particles.length; i++) {
@@ -200,11 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dy = particles[i].y - particles[j].y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 
-                if (dist < 150) {
+                if (dist < 120) {
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 - dist/150})`;
+                    ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 - dist/120})`;
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }
@@ -212,43 +216,87 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function animateCanvas() {
+    let lastFrame = 0;
+    function animateCanvas(ts) {
+        if (document.hidden) {
+            requestAnimationFrame(animateCanvas);
+            return;
+        }
+        if (ts - lastFrame < 33) {
+            requestAnimationFrame(animateCanvas);
+            return;
+        }
+        lastFrame = ts || 0;
         ctx.clearRect(0, 0, width, height);
         particles.forEach(p => { p.update(); p.draw(); });
         drawLines();
         requestAnimationFrame(animateCanvas);
     }
-    animateCanvas();
+    requestAnimationFrame(animateCanvas);
 
     // ═════════════════════════  FETCH DATA FROM API  ═════════════════════════
-    fetchData();
-
-    async function fetchData() {
+    async function fetchWithTimeout(url, ms = 10000) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), ms);
         try {
-            const [projectsRes, skillsRes, achievementsRes] = await Promise.all([
-                fetch('/api/projects'),
-                fetch('/api/skills'),
-                fetch('/api/achievements')
-            ]);
-
-            const projects = await projectsRes.json();
-            const skills = await skillsRes.json();
-            const achievements = await achievementsRes.json();
-
-            renderProjects(projects);
-            renderSkills(skills);
-            renderAchievements(achievements);
-            
-            // Initialize filters after rendering projects
-            initFilters();
-            
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            document.getElementById('projectsGrid').innerHTML = '<p>Failed to load data.</p>';
-            document.getElementById('skillsContainer').innerHTML = '<p>Failed to load data.</p>';
-            document.getElementById('achievementsGrid').innerHTML = '<p>Failed to load data.</p>';
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeout);
+            return res;
+        } catch (err) {
+            clearTimeout(timeout);
+            throw err;
         }
     }
+
+    async function fetchData() {
+        // Clear loading states immediately
+        const grid = document.getElementById('projectsGrid');
+        const skillsContainer = document.getElementById('skillsContainer');
+        const achievementsGrid = document.getElementById('achievementsGrid');
+
+        async function loadProjects() {
+            try {
+                const res = await fetchWithTimeout('/api/projects');
+                const projects = await res.json();
+                renderProjects(projects);
+            } catch (e) {
+                console.error('Projects error:', e);
+                grid.innerHTML = '<p style="color:#ff375f">Failed to load projects.</p>';
+            }
+        }
+
+        async function loadSkills() {
+            try {
+                const res = await fetchWithTimeout('/api/skills');
+                const skills = await res.json();
+                renderSkills(skills);
+            } catch (e) {
+                console.error('Skills error:', e);
+                skillsContainer.innerHTML = '<p style="color:#ff375f">Failed to load skills.</p>';
+            }
+        }
+
+        async function loadAchievements() {
+            try {
+                const res = await fetchWithTimeout('/api/achievements');
+                const achievements = await res.json();
+                renderAchievements(achievements);
+            } catch (e) {
+                console.error('Achievements error:', e);
+                achievementsGrid.innerHTML = '<p style="color:#ff375f">Failed to load achievements.</p>';
+            }
+        }
+
+        // Load all independently (no Promise.all blocking)
+        await Promise.all([loadProjects(), loadSkills(), loadAchievements()]);
+
+        // Initialize filters after projects loaded
+        initFilters();
+        window.__pageReady = true;
+        hideLoader();
+    }
+
+    fetchData();
 
     // ── Render Projects ──
     function renderProjects(projects) {

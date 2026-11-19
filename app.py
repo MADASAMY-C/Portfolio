@@ -24,12 +24,22 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'projects'), exist_ok=True)
 os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'achievements'), exist_ok=True)
 os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'resume'), exist_ok=True)
+os.makedirs(os.path.join(app.static_folder, 'images'), exist_ok=True)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 def allowed_file(filename):
     return ('.' in filename and
             filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS'])
+
+
+def get_avatar_static_path():
+    images_dir = os.path.join(app.static_folder, 'images')
+    for ext in ('jpg', 'jpeg', 'png', 'gif', 'webp'):
+        name = f'avatar.{ext}'
+        if os.path.isfile(os.path.join(images_dir, name)):
+            return f'images/{name}'
+    return 'images/avatar.jpg'
 
 
 def login_required(f):
@@ -89,7 +99,7 @@ def close_db(exception=None):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', avatar_path=get_avatar_static_path())
 
 
 # ── API: Projects ────────────────────────────────────────────────────────────
@@ -184,7 +194,8 @@ def admin_dashboard():
                            skill_count=skill_count,
                            achievement_count=achievement_count,
                            unread_count=unread_count,
-                           recent_messages=recent_messages)
+                           recent_messages=recent_messages,
+                           avatar_path=get_avatar_static_path())
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
@@ -485,6 +496,36 @@ def admin_upload_resume():
         flash('Resume uploaded successfully!', 'success')
     else:
         flash('Only PDF files allowed.', 'error')
+    return redirect(url_for('admin_dashboard'))
+
+
+# ── Admin: Avatar upload ─────────────────────────────────────────────────────
+@app.route('/admin/avatar/upload', methods=['POST'])
+@login_required
+def admin_upload_avatar():
+    if 'avatar' not in request.files:
+        flash('No file selected.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    file = request.files['avatar']
+    if not file or not file.filename:
+        flash('No file selected.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+    ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
+    if ext not in ('png', 'jpg', 'jpeg', 'gif', 'webp'):
+        flash('Only image files (png, jpg, jpeg, gif, webp) are allowed.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+    images_dir = os.path.join(app.static_folder, 'images')
+    os.makedirs(images_dir, exist_ok=True)
+    for old_ext in ('jpg', 'jpeg', 'png', 'gif', 'webp'):
+        old_path = os.path.join(images_dir, f'avatar.{old_ext}')
+        if os.path.isfile(old_path):
+            os.remove(old_path)
+
+    filename = f'avatar.{ext}'
+    file.save(os.path.join(images_dir, filename))
+    flash('Avatar updated successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 
