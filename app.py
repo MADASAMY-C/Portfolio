@@ -10,9 +10,12 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from config import Config
 
+from whitenoise import WhiteNoise
+
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 app.config.from_object(Config)
 
 
