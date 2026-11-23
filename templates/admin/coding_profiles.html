@@ -1,0 +1,265 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Coding Profiles{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3><i class="fas fa-code"></i> Coding Profiles</h3>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProfileModal">
+            <i class="fas fa-plus"></i> Add Profile
+        </button>
+    </div>
+    <div class="card-body">
+        {% if profiles %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Username</th>
+                        <th>Display Name</th>
+                        <th>URL</th>
+                        <th>Order</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in profiles %}
+                    <tr>
+                        <td>
+                            <i class="{{ p.icon_class }}"></i> {{ p.platform }}
+                        </td>
+                        <td>{{ p.username }}</td>
+                        <td>{{ p.display_name or p.platform }}</td>
+                        <td><a href="{{ p.profile_url }}" target="_blank" class="btn-link">{{ p.profile_url }}</a></td>
+                        <td>{{ p.display_order }}</td>
+                        <td>
+                            {% if p.is_active %}
+                                <span class="badge badge-success">Active</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal{{ p.id }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form action="{{ url_for('admin_delete_coding_profile', pid=p.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this coding profile?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-4">No coding profiles yet.</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Profile Modal -->
+<div class="modal fade" id="addProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ url_for('admin_add_coding_profile') }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus"></i> Add Coding Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Platform</label>
+                        <div class="col-sm-10">
+                            <select name="platform" class="form-select" required>
+                                <option value="LeetCode">LeetCode</option>
+                                <option value="CodeChef">CodeChef</option>
+                                <option value="Codeforces">Codeforces</option>
+                                <option value="AtCoder">AtCoder</option>
+                                <option value="HackerRank">HackerRank</option>
+                                <option value="GeeksforGeeks">GeeksforGeeks</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Profile URL</label>
+                        <div class="col-sm-10">
+                            <input type="url" name="profile_url" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Icon Class</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="icon_class" class="form-control" placeholder="fas fa-code" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Display Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="display_name" class="form-control" placeholder="LeetCode Journey">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Stats (JSON)</label>
+                        <div class="col-sm-10">
+                            <textarea name="stats_json" class="form-control" rows="3" placeholder='{"solved": 200, "easy": 56, "medium": 18, "hard": 2}'>{}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Display Order</label>
+                        <div class="col-sm-10">
+                            <input type="number" name="display_order" class="form-control" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Active</label>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input type="checkbox" name="is_active" class="form-check-input" checked>
+                                <label class="form-check-label">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modals -->
+{% for p in profiles %}
+<div class="modal fade" id="editProfileModal{{ p.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ url_for('admin_edit_coding_profile', pid=p.id) }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Edit {{ p.platform }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Platform</label>
+                        <div class="col-sm-10">
+                            <select name="platform" class="form-select" required>
+                                <option value="LeetCode" {% if p.platform == 'LeetCode' %}selected{% endif %}>LeetCode</option>
+                                <option value="CodeChef" {% if p.platform == 'CodeChef' %}selected{% endif %}>CodeChef</option>
+                                <option value="Codeforces" {% if p.platform == 'Codeforces' %}selected{% endif %}>Codeforces</option>
+                                <option value="AtCoder" {% if p.platform == 'AtCoder' %}selected{% endif %}>AtCoder</option>
+                                <option value="HackerRank" {% if p.platform == 'HackerRank' %}selected{% endif %}>HackerRank</option>
+                                <option value="GeeksforGeeks" {% if p.platform == 'GeeksforGeeks' %}selected{% endif %}>GeeksforGeeks</option>
+                                <option value="Other" {% if p.platform == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" value="{{ p.username }}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Profile URL</label>
+                        <div class="col-sm-10">
+                            <input type="url" name="profile_url" class="form-control" value="{{ p.profile_url }}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Icon Class</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="icon_class" class="form-control" value="{{ p.icon_class }}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Display Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="display_name" class="form-control" value="{{ p.display_name or '' }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Stats (JSON)</label>
+                        <div class="col-sm-10">
+                            <textarea name="stats_json" class="form-control" rows="3">{{ p.stats_json | tojson }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Display Order</label>
+                        <div class="col-sm-10">
+                            <input type="number" name="display_order" class="form-control" value="{{ p.display_order }}" min="0">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Active</label>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input type="checkbox" name="is_active" class="form-check-input" {% if p.is_active %}checked{% endif %}>
+                                <label class="form-check-label">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Add Profile button
+    var addBtn = document.querySelector('[data-bs-target="#addProfileModal"]');
+    if (addBtn) {
+        addBtn.addEventListener('click', function() {
+            var modal = document.getElementById('addProfileModal');
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+            }
+        });
+    }
+    
+    // Handle Edit buttons
+    document.querySelectorAll('[data-bs-target^="#editProfileModal"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = btn.getAttribute('data-bs-target');
+            var modal = document.querySelector(target);
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+            }
+        });
+    });
+    
+    // Handle close buttons
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var modal = btn.closest('.modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

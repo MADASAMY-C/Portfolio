@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}About Me{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-user"></i> Edit About Me Section</h3>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('admin_about') }}" method="POST">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Title</label>
+                <div class="col-sm-10">
+                    <input type="text" name="title" class="form-control" value="{{ about.title or '' }}" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Intro Text</label>
+                <div class="col-sm-10">
+                    <textarea name="intro_text" class="form-control" rows="4" required>{{ about.intro_text or '' }}</textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Journey Text</label>
+                <div class="col-sm-10">
+                    <textarea name="journey_text" class="form-control" rows="4" required>{{ about.journey_text or '' }}</textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Status Text</label>
+                <div class="col-sm-10">
+                    <input type="text" name="status_text" class="form-control" value="{{ about.status_text or '' }}" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Location</label>
+                <div class="col-sm-10">
+                    <input type="text" name="location" class="form-control" value="{{ about.location or '' }}" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Role</label>
+                <div class="col-sm-10">
+                    <input type="text" name="role" class="form-control" value="{{ about.role or '' }}" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Experience</label>
+                <div class="col-sm-10">
+                    <input type="text" name="experience" class="form-control" value="{{ about.experience or '' }}" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

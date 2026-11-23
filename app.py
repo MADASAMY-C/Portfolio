@@ -10,12 +10,17 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from config import Config
 
-from whitenoise import WhiteNoise
+try:
+    from whitenoise import WhiteNoise
+    _HAS_WHITENOISE = True
+except ImportError:
+    _HAS_WHITENOISE = False
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
-app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+if _HAS_WHITENOISE:
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 app.config.from_object(Config)
 
 
@@ -138,6 +143,26 @@ def api_achievements():
     return jsonify(achievements)
 
 
+# ── API: Coding Profiles ─────────────────────────────────────────────────────
+@app.route('/api/coding-profiles')
+def api_coding_profiles():
+    cur = get_cursor()
+    cur.execute("SELECT * FROM coding_profiles WHERE is_active=1 ORDER BY display_order, created_at")
+    profiles = cur.fetchall()
+    cur.close()
+    return jsonify(profiles)
+
+
+# ── API: About Me ────────────────────────────────────────────────────────────
+@app.route('/api/about')
+def api_about():
+    cur = get_cursor()
+    cur.execute("SELECT * FROM about ORDER BY id DESC LIMIT 1")
+    about = cur.fetchone()
+    cur.close()
+    return jsonify(about or {})
+
+
 # ── API: Contact form ────────────────────────────────────────────────────────
 @app.route('/api/contact', methods=['POST'])
 def api_contact():
@@ -187,6 +212,8 @@ def admin_dashboard():
     skill_count = cur.fetchone()['cnt']
     cur.execute("SELECT COUNT(*) as cnt FROM achievements")
     achievement_count = cur.fetchone()['cnt']
+    cur.execute("SELECT COUNT(*) as cnt FROM coding_profiles WHERE is_active=1")
+    coding_profile_count = cur.fetchone()['cnt']
     cur.execute("SELECT COUNT(*) as cnt FROM messages WHERE is_read = 0")
     unread_count = cur.fetchone()['cnt']
     cur.execute("SELECT * FROM messages ORDER BY sent_at DESC LIMIT 5")
@@ -196,6 +223,7 @@ def admin_dashboard():
                            project_count=project_count,
                            skill_count=skill_count,
                            achievement_count=achievement_count,
+                           coding_profile_count=coding_profile_count,
                            unread_count=unread_count,
                            recent_messages=recent_messages,
                            avatar_path=get_avatar_static_path())
@@ -530,6 +558,111 @@ def admin_upload_avatar():
     file.save(os.path.join(images_dir, filename))
     flash('Avatar updated successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
+
+
+# ── Admin: Coding Profiles ───────────────────────────────────────────────────
+@app.route('/admin/coding-profiles')
+@login_required
+def admin_coding_profiles():
+    cur = get_cursor()
+    cur.execute("SELECT * FROM coding_profiles ORDER BY display_order, created_at")
+    profiles = cur.fetchall()
+    cur.close()
+    return render_template('admin/coding_profiles.html', profiles=profiles)
+
+
+@app.route('/admin/coding-profiles/add', methods=['POST'])
+@login_required
+def admin_add_coding_profile():
+    platform = request.form.get('platform')
+    username = request.form.get('username')
+    profile_url = request.form.get('profile_url')
+    icon_class = request.form.get('icon_class')
+    display_name = request.form.get('display_name')
+    stats_json = request.form.get('stats_json') or '{}'
+    is_active = 1 if request.form.get('is_active') else 0
+    display_order = int(request.form.get('display_order') or 0)
+
+    cur = get_cursor()
+    cur.execute(
+        """INSERT INTO coding_profiles (platform, username, profile_url, icon_class, display_name, stats_json, is_active, display_order)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
+        (platform, username, profile_url, icon_class, display_name, stats_json, is_active, display_order)
+    )
+    get_db().commit()
+    cur.close()
+    flash('Coding profile added successfully!', 'success')
+    return redirect(url_for('admin_coding_profiles'))
+
+
+@app.route('/admin/coding-profiles/edit/<int:pid>', methods=['POST'])
+@login_required
+def admin_edit_coding_profile(pid):
+    platform = request.form.get('platform')
+    username = request.form.get('username')
+    profile_url = request.form.get('profile_url')
+    icon_class = request.form.get('icon_class')
+    display_name = request.form.get('display_name')
+    stats_json = request.form.get('stats_json') or '{}'
+    is_active = 1 if request.form.get('is_active') else 0
+    display_order = int(request.form.get('display_order') or 0)
+
+    cur = get_cursor()
+    cur.execute(
+        """UPDATE coding_profiles SET platform=%s, username=%s, profile_url=%s, icon_class=%s, display_name=%s, stats_json=%s, is_active=%s, display_order=%s WHERE id=%s""",
+        (platform, username, profile_url, icon_class, display_name, stats_json, is_active, display_order, pid)
+    )
+    get_db().commit()
+    cur.close()
+    flash('Coding profile updated!', 'success')
+    return redirect(url_for('admin_coding_profiles'))
+
+
+@app.route('/admin/coding-profiles/delete/<int:pid>', methods=['POST'])
+@login_required
+def admin_delete_coding_profile(pid):
+    cur = get_cursor()
+    cur.execute("DELETE FROM coding_profiles WHERE id=%s", (pid,))
+    get_db().commit()
+    cur.close()
+    flash('Coding profile deleted.', 'success')
+    return redirect(url_for('admin_coding_profiles'))
+
+
+# ── Admin: About Me ──────────────────────────────────────────────────────────
+@app.route('/admin/about', methods=['GET', 'POST'])
+@login_required
+def admin_about():
+    cur = get_cursor()
+    if request.method == 'POST':
+        title = request.form.get('title')
+        intro_text = request.form.get('intro_text')
+        journey_text = request.form.get('journey_text')
+        status_text = request.form.get('status_text')
+        location = request.form.get('location')
+        role = request.form.get('role')
+        experience = request.form.get('experience')
+
+        cur.execute("SELECT id FROM about ORDER BY id DESC LIMIT 1")
+        row = cur.fetchone()
+        if row:
+            cur.execute(
+                """UPDATE about SET title=%s, intro_text=%s, journey_text=%s, status_text=%s, location=%s, role=%s, experience=%s, updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
+                (title, intro_text, journey_text, status_text, location, role, experience, row['id'])
+            )
+        else:
+            cur.execute(
+                """INSERT INTO about (title, intro_text, journey_text, status_text, location, role, experience) VALUES (%s,%s,%s,%s,%s,%s,%s)""",
+                (title, intro_text, journey_text, status_text, location, role, experience)
+            )
+        get_db().commit()
+        flash('About section updated!', 'success')
+        return redirect(url_for('admin_about'))
+
+    cur.execute("SELECT * FROM about ORDER BY id DESC LIMIT 1")
+    about = cur.fetchone()
+    cur.close()
+    return render_template('admin/about.html', about=about or {})
 
 
 # ── Serve uploads ────────────────────────────────────────────────────────────

@@ -287,8 +287,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        async function loadCodingProfiles() {
+            try {
+                const res = await fetchWithTimeout('/api/coding-profiles');
+                const profiles = await res.json();
+                renderCodingProfiles(profiles);
+            } catch (e) {
+                console.error('Coding profiles error:', e);
+                const container = document.getElementById('codingProfilesContainer');
+                if (container) container.innerHTML = '<p style="color:#ff375f">Failed to load coding profiles.</p>';
+            }
+        }
+
         // Load all independently (no Promise.all blocking)
-        await Promise.all([loadProjects(), loadSkills(), loadAchievements()]);
+        await Promise.all([loadProjects(), loadSkills(), loadAchievements(), loadCodingProfiles()]);
 
         // Initialize filters after projects loaded
         initFilters();
@@ -426,6 +438,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             grid.innerHTML += card;
+        });
+    }
+
+    // ── Render Coding Profiles ──────────────────────────────────────────────
+    function renderCodingProfiles(profiles) {
+        const container = document.getElementById('codingProfilesContainer');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        if (profiles.length === 0) {
+            container.innerHTML = '<p>No coding profiles configured.</p>';
+            return;
+        }
+
+        profiles.forEach((p, index) => {
+            const delay = 200 + (index * 100);
+            const stats = p.stats_json || {};
+            let statsHtml = '';
+            
+            // Build stats HTML based on available stats
+            const statKeys = Object.keys(stats);
+            statKeys.forEach((key, statIndex) => {
+                const isLast = statIndex === statKeys.length - 1;
+                const className = key.toLowerCase();
+                statsHtml += `
+                    <div class="dsa-stat ${className}">
+                        <div class="dsa-count" data-target="${stats[key]}">0</div>
+                        <div class="dsa-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                    </div>
+                `;
+                if (!isLast) {
+                    statsHtml += '<div class="dsa-divider"></div>';
+                }
+            });
+
+            const widget = `
+                <div class="dsa-widget" data-aos="fade-up" data-aos-delay="${delay}">
+                    <div class="dsa-header">
+                        <i class="${p.icon_class}"></i>
+                        <span>${p.display_name || p.platform}</span>
+                        <a href="${p.profile_url}" target="_blank" class="dsa-link">View Profile →</a>
+                    </div>
+                    <div class="dsa-stats">
+                        ${statsHtml}
+                    </div>
+                </div>
+            `;
+            container.innerHTML += widget;
+        });
+
+        // Initialize counter animation for new elements
+        initCounterAnimations();
+    }
+
+    function initCounterAnimations() {
+        const counters = document.querySelectorAll('.dsa-count[data-target]');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            if (isNaN(target)) return;
+            
+            let current = 0;
+            const increment = Math.ceil(target / 50);
+            const duration = 1500;
+            const stepTime = duration / 50;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                counter.textContent = current;
+            }, stepTime);
         });
     }
 

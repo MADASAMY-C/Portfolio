@@ -8,6 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Coding profiles modal handling
+    var addBtn = document.querySelector('[data-bs-target="#addProfileModal"]');
+    if (addBtn) {
+        addBtn.addEventListener('click', function() {
+            var modal = document.getElementById('addProfileModal');
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+            }
+        });
+    }
+    
+    document.querySelectorAll('[data-bs-target^="#editProfileModal"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = btn.getAttribute('data-bs-target');
+            var modal = document.querySelector(target);
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+            }
+        });
+    });
+    
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var modal = btn.closest('.modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        });
+    });
+
     // Modal logic
     const closeBtns = document.querySelectorAll('.close-modal');
     closeBtns.forEach(btn => {
